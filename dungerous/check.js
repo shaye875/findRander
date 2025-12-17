@@ -1,18 +1,15 @@
 
+import { lookupService } from 'dns/promises';
 import fs from 'fs'
 
-function arrCall(){
+async function arrCall(){
    return new Promise((res,rej)=>{
     fs.readFile("./data/TRANSCRIPTIONS.json","utf8",(err,data)=>{
-        if(err){
-            rej(err); 
-        }else{
-            res(JSON.parse(data))
-        }
+    res(JSON.parse(data))
    }) 
 })}
 
-function arrPeople(){
+async function arrPeople(){
      return new Promise((res,rej)=>{
     fs.readFile("./data/PEOPLE.json","utf8",(err,data)=>{
         if(err){
@@ -50,7 +47,18 @@ function averge(list){
     return sum/list.length
 }
 
+function sortByAverge(obj){
+    let objavg = {}
+    for(let k in obj){
+        objavg[k] = averge(obj[k])
+    }
+    const list = Object.entries(objavg)
+    list.sort((a,b)=>b[1]-a[1])
+    return list
+}
+
 export async function arrAgeDung(){
+    return new Promise((res)=>{
     arrCall().then((arr)=>{
         let obj = {}
         arr.forEach((c)=>{
@@ -69,30 +77,32 @@ export async function arrAgeDung(){
             }
         }
         })
-        const top3 = []
-        let bool = true
-        for(let k in obj){
-            if(top3.length<3){
-                top3.push(k)
-            }else{
-                for(let age of top3){
-                    console.log(top3);
-                    
-                    if(Number(averge(obj[k])) > Number(averge(obj[age]))){
-                        console.log(k,Number(averge(obj[k]),age,Number(averge(obj[age]))))
-                        top3[top3.indexOf(age)] = k
-                        break
-                    }
-                }
-            }
-           
-        }
-        console.log(top3);
+        const list =sortByAverge(obj)
+        res([list[0],list[1],list[2]])
     })
+})
     
     
 }
-arrAgeDung()
+
+export async function report(){
+    const top3 =await arrAgeDung().then(async(top)=>{
+    const people =await arrPeople().then(async(arr)=>{
+    const listPeople = arr.filter((p)=>{
+        top.forEach((a)=>{
+            if(a[0] === p.age){
+                return p
+            }
+        })
+    })
+    const res =await fetch(`https://spiestestserver.onrender.com/report?data=${listPeople}`)
+    const data =await res.text()
+    console.log(data);
+    })
+})
+}
+
+
 
 
 

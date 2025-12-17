@@ -2,7 +2,7 @@ import readLineSync from 'readline-sync'
 import { searchPeopleByAge, searchPeopleByName } from './search/searchPeople.js';
 import { toJson } from './getData/getPeople.js';
 import { toJsonTranc } from './getData/getTranscriptions.js';
-import { arrAgeDung } from './dungerous/check.js';
+import { arrAgeDung,report } from './dungerous/check.js';
 
 async function menu() {
     let flag = true
@@ -29,7 +29,7 @@ async function menu() {
                 await searchPeopleByAge()
                 break
             case 5:
-                await arrAgeDung()
+                await report()
                 break
             case 0:
                 flag = false
