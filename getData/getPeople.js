@@ -6,20 +6,22 @@ export async function getPeople(){
     const arrPeople = await res.text()
     return arrPeople
     }catch(err){
-        console.error(err);
+        console.error(err)
     }
 }
 
 
 export async function toJson(){
-    fs.writeFile("./data/PEOPLE.json",await getPeople(),(err)=>{
+    const arr =await getPeople()
+    return new Promise((res)=>{
+        fs.writeFile("data/PEOPLE.json",arr,(err)=>{
         if(err){
-            console.error(err);
+            rej(err);
             
         }else{
-            console.log("people added");
+            res("people added");
         }
     })
+})
 }
-
 

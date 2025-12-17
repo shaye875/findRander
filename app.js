@@ -21,14 +21,19 @@ async function menu() {
                 break
             case 2:
                 await toJsonTranc()
+                break
             case 3:
-                searchPeopleByName()
+                await searchPeopleByName()
+                break
             case 4:
-                searchPeopleByAge()
+                await searchPeopleByAge()
+                break
             case 5:
                 await arrAgeDung()
+                break
             case 0:
                 flag = false
+                break
         }
     }
 }
